@@ -8,6 +8,11 @@ import android.widget.EditText
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        val MINIMO_CHAR_NOME = 3
+        val MINIMO_CHAR_SENHA = 4
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -20,69 +25,33 @@ class MainActivity : AppCompatActivity() {
 
 
         btn.setOnClickListener{
-            val name_size = txt_name.length() //tamanho da string inserida
+            val nome = txt_name.text.toString()
+            val email = txt_email.text.toString()
+            val senha = txt_senha.text.toString()
 
-
-            var buider = AlertDialog.Builder(this)
-
-            buider.setTitle("Erro!")
-
-            //validando nome (no mínimo 3 caracteres)
-            if(name_size < 3) {
-                buider.setMessage("O nome precisa ser no mínimo 3 caracteres" +
-                        "\nO nome digitado possui apenas $name_size")
+            //VALIDANDO NOME
+            if(!validar_min_chars(nome, MINIMO_CHAR_NOME)){
+                txt_name.error = "Nome deve ter pelo menos $MINIMO_CHAR_NOME caracteres"
             }
 
-            //validando o email
-
-            //transforma a string em um vetor de caracteres
-            val chars = txt_email.text.toString().toCharArray()
-            var msg = ""
-            //o i representa um caractere que vai varrer a string inserida na caixa de email
-            for (i in chars.iterator()) {
-
-                //se o i não encontrar o @ o email será inválido!!
-                if(i != '@'){
-                   msg = "E-mail inválido"
-                } else {
-                    buider.setTitle("")
-                    msg="Ok"
-                    break
-                }
-            }
-            buider.setMessage(msg)
-
-            //validando senha
-            val password_size = txt_senha.length() //tamanho da string inserida
-            val nums = listOf<Char>('0', '1', '2', '3', '4', '5', '6', '7','8', '9')
-            var cont = 0
-
-            val password_chars = txt_senha.text.toString().toCharArray()
-
-            /*
-            * se a senha conter uma sequencia de 2 números a senha será invalidada*/
-            for(i in password_chars.iterator()){
-
-                if(i in nums){
-                    cont++
-
-                    if(cont == 2 || password_size < 4)
-                        buider.setMessage("Senha inválida(pode conter sequencias numéricas ou ter " +
-                                "menos de 4 caracteres)")
-                } else
-                    cont = 0
-
+            if(!validarEmail(email)){
+                txt_email.error="E-mail deve possuir @"
             }
 
+            if(!validar_min_chars(senha, MINIMO_CHAR_SENHA)){
+                txt_senha.error = "Senha deve ter pelo menos $MINIMO_CHAR_SENHA caracteres"
+            }
 
-          //buider.setMessage("" + nums)
+            if(!textoContemUmNumero(senha)){
+                txt_senha.error = "Senha deve ter pelo menos um número"
+            }
 
-            // Finally, make the alert dialog using builder
-            val dialog: AlertDialog = buider.create()
+            if (isSeqNum(senha)){
+                txt_senha.error = "Senha não pode ser sequencia"
 
-            // Display the alert dialog on app interface
-            dialog.show()
+            }
         }
+
     }
 
 
